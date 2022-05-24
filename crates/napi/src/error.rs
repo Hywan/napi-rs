@@ -34,6 +34,15 @@ unsafe impl Sync for Error {}
 
 impl error::Error for Error {}
 
+impl<E> From<E> for Error
+where
+  E: error::Error,
+{
+  fn from(error: E) -> Self {
+    Error::new(Status::InvalidArg, error.to_string())
+  }
+}
+
 #[cfg(feature = "serde-json")]
 impl ser::Error for Error {
   fn custom<T: Display>(msg: T) -> Self {
@@ -45,13 +54,6 @@ impl ser::Error for Error {
 impl de::Error for Error {
   fn custom<T: Display>(msg: T) -> Self {
     Error::new(Status::InvalidArg, msg.to_string())
-  }
-}
-
-#[cfg(feature = "serde-json")]
-impl From<SerdeJSONError> for Error {
-  fn from(value: SerdeJSONError) -> Self {
-    Error::new(Status::InvalidArg, format!("{}", value))
   }
 }
 
