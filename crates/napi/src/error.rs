@@ -122,7 +122,7 @@ impl From<std::io::Error> for Error {
   fn from(error: std::io::Error) -> Self {
     Error {
       status: Status::GenericFailure,
-      reason: format!("{}", error),
+      reason: error.to_string(),
       #[cfg(all(feature = "tokio_rt", feature = "napi4"))]
       maybe_raw: ptr::null_mut(),
     }
